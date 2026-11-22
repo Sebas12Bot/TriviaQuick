@@ -1,0 +1,25 @@
+triviaquick:
+  jwt:
+    secret: test-secret-for-triviaquick-integration-tests-0123456789
+  security:
+    teacher-signup-code: codigo-docente-pruebas
+  rate-limit:
+    answers-per-window: 1000
+    window-seconds: 10
+  seed:
+    demo-data: false
+  storage:
+    dir: ${java.io.tmpdir}/triviaquick-test-uploads
+    max-upload-bytes: 3145728
+  embedded-db:
+    # Puerto aleatorio y directorio temporal limpio en cada ejecución.
+    port: 0
+    data-dir: ""
+    clean: true
+
+logging:
+  level:
+    com.triviaquick: WARN
+    org.springframework: WARN
+    org.hibernate: WARN
+    io.zonky: WARN
