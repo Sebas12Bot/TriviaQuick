@@ -1,0 +1,91 @@
+/* =====================================================================
+   Panel docente
+   ===================================================================== */
+.tq-teacher { max-width: 1180px; margin: 0 auto; padding: 28px clamp(16px, 4vw, 40px) 64px; display: flex; flex-direction: column; gap: 20px; }
+.tq-teacher__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.tq-teacher__head h1 { font-size: clamp(1.7rem, 1.2rem + 2vw, 2.4rem); font-weight: 780; }
+.tq-teacher__head p { margin-top: 4px; }
+
+.tq-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0; }
+@media (max-width: 760px) { .tq-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tq-stat {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+}
+.tq-stat dt { font-size: 0.85rem; color: var(--ink-soft); }
+.tq-stat dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-stretch: 120%;
+  font-weight: 760;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--blue-secondary);
+}
+.tq-stat--accent { border-color: var(--coral-line); background: linear-gradient(180deg, var(--coral-soft), var(--white) 70%); }
+.tq-stat--accent dd { color: var(--coral-ink); }
+.tq-stat--skeleton { min-height: 74px; background: linear-gradient(90deg, var(--gray-100), var(--gray-50), var(--gray-100)); background-size: 200% 100%; animation: tq-shimmer-light 1.4s linear infinite; }
+@keyframes tq-shimmer-light { to { background-position: -200% 0; } }
+
+.tq-teacher__grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 960px) { .tq-teacher__grid { grid-template-columns: 1fr; } }
+.tq-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+.tq-quiz-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tq-quiz {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.tq-quiz:first-child { border-top: none; }
+.tq-quiz__cover {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(150deg, var(--blue-electric), var(--blue-secondary));
+  color: var(--white);
+  font-family: var(--font-display);
+  font-weight: 760;
+  font-size: 1.4rem;
+
+}
+.tq-quiz__cover img { width: 100%; height: 100%; object-fit: cover; }
+.tq-quiz__title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 650; }
+.tq-quiz__title a { color: var(--ink); text-decoration: none; }
+.tq-quiz__title a:hover { color: var(--blue-electric); text-decoration: underline; text-underline-offset: 3px; }
+.tq-quiz__meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.85rem; margin-top: 2px; }
+.tq-quiz__actions { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 620px) {
+  .tq-quiz { grid-template-columns: 48px minmax(0, 1fr); }
+  .tq-quiz__cover { width: 48px; height: 48px; }
+  .tq-quiz__actions { grid-column: 1 / -1; justify-content: flex-end; }
+}
+
+.tq-recent { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.tq-recent__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+.tq-recent__row:hover { background: var(--coral-soft); }
+.tq-recent__icon { color: var(--coral); }
+.tq-recent__text { display: flex; flex-direction: column; min-width: 0; }
+.tq-recent__text small { color: var(--ink-soft); }
+.tq-recent__score { font-family: var(--font-display); font-stretch: 115%; font-weight: 720; color: var(--blue-secondary); }
+.tq-live h2::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--coral); vertical-align: middle; }
