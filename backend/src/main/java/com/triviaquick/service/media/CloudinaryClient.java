@@ -57,8 +57,20 @@ public class CloudinaryClient {
         if (url == null || url.isBlank()) {
             return Optional.empty();
         }
-        URI uri = URI.create(url.trim());
-        if (!"cloudinary".equals(uri.getScheme()) || uri.getUserInfo() == null || !uri.getUserInfo().contains(":")) {
+        String value = url.trim();
+        // Tolera que se pegue la línea completa del panel de Cloudinary ("CLOUDINARY_URL=cloudinary://...").
+        if (value.regionMatches(true, 0, "CLOUDINARY_URL=", 0, 15)) {
+            value = value.substring(15).trim();
+        }
+        URI uri;
+        try {
+            uri = new URI(value);
+        } catch (java.net.URISyntaxException e) {
+            uri = null;
+        }
+        if (uri == null || !"cloudinary".equals(uri.getScheme()) || uri.getUserInfo() == null
+                || !uri.getUserInfo().contains(":") || uri.getHost() == null) {
+            // Nunca se incluye el valor en el mensaje: contiene el API secret.
             throw new IllegalStateException("CLOUDINARY_URL debe tener el formato cloudinary://API_KEY:API_SECRET@CLOUD_NAME");
         }
         String[] creds = uri.getUserInfo().split(":", 2);

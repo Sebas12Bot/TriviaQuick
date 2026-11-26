@@ -119,6 +119,9 @@
 
 .tq-field__affix { position: relative; display: flex; }
 .tq-field__affix input { flex: 1; min-width: 0; padding-right: 48px; }
+/* Edge añade su propio ojo de "mostrar contraseña": se oculta para dejar solo el de la app (el que anima a Coby). */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear { display: none; }
 .tq-field__toggle {
   position: absolute;
   right: 4px;

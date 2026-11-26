@@ -61,4 +61,14 @@ class MediaDetectionTest {
                 .isEqualTo("https://res.cloudinary.com/micloud/video/upload/q_auto/triviaquick/abc.mp4");
         assertThat(CloudinaryClient.fromUrl("", "x")).isEmpty();
     }
+
+    @Test
+    void cloudinaryUrlAcceptsPastedLineAndNeverLeaksTheSecret() {
+        CloudinaryClient pasted = CloudinaryClient.fromUrl("CLOUDINARY_URL=cloudinary://key:secret@micloud", "f").orElseThrow();
+        assertThat(pasted.deliveryUrl(CloudinaryClient.ResourceType.IMAGE, "a", "jpg"))
+                .isEqualTo("https://res.cloudinary.com/micloud/image/upload/q_auto/f/a.jpg");
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> CloudinaryClient.fromUrl("cloud inary://key:topsecret@x", "f"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageNotContaining("topsecret");
+    }
 }
