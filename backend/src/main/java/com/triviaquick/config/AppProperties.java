@@ -18,7 +18,8 @@ public record AppProperties(
         Storage storage,
         Mail mail) {
 
-    public record Storage(String dir, long maxUploadBytes) {
+    /** cloudinaryUrl vacío = disco local. */
+    public record Storage(String dir, long maxImageBytes, long maxVideoBytes, String cloudinaryUrl, String cloudinaryFolder) {
     }
 
     /** {@code publicUrl}: URL del frontend usada en los enlaces de los correos de verificación. */

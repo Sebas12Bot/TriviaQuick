@@ -10,4 +10,5 @@ export const triviaService = {
   remove: (id: number) => api.del<void>(`/api/trivias/${id}`),
   dashboard: () => api.get<TeacherDashboard>('/api/teacher/dashboard'),
   uploadImage: (file: File) => api.upload<{ key: string; url: string }>('/api/media', file),
+  uploadVideo: (file: File) => api.upload<{ key: string; url: string }>('/api/media/video', file),
 };

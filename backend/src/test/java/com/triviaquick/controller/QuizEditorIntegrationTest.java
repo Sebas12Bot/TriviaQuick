@@ -165,7 +165,7 @@ class QuizEditorIntegrationTest extends IntegrationTestBase {
         }
         String scoring = "\"scoring\":{\"speedBonusEnabled\":true,\"speedTiers\":[{\"maxElapsedPercent\":50,\"bonusPoints\":80},"
                 + "{\"maxElapsedPercent\":100,\"bonusPoints\":20}],\"streakEnabled\":true,\"streakBreaksOnMiss\":true,"
-                + "\"streakTiers\":[{\"streakLength\":2,\"bonusPoints\":40}]},\"events\":{\"mode\":\"OFF\"}";
+                + "\"streakTiers\":[{\"streakLength\":2,\"bonusPoints\":40}],\"fastestBonusEnabled\":false},\"events\":{\"mode\":\"OFF\"}";
         Long id = create(teacher, quiz("PUBLISHED", qs.toString(), scoring));
         ResultActions detail = call(get("/api/trivias/" + id), teacher);
         TestUser ana = student("Ana");

@@ -21,7 +21,7 @@ const state = (answered: SessionState['myAnswer'] = null): SessionState => ({
   me: { participantId: 1, displayName: 'Ana', score: 0, correctAnswers: 0, answeredCount: 0, position: 1, currentStreak: 0, bestStreak: 0 },
   myAnswer: answered,
   currentQuestion: {
-    id: 7, index: 0, total: 2, text: '¿Cuál?', type: 'MULTIPLE_CHOICE', imageUrl: null, timeLimitSeconds: 20, basePoints: 1000,
+    id: 7, index: 0, total: 2, text: '¿Cuál?', type: 'MULTIPLE_CHOICE', imageUrl: null, videoUrl: null, timeLimitSeconds: 20, basePoints: 1000,
     startedAt: new Date().toISOString(), deadline: new Date(Date.now() + 20000).toISOString(),
     options: [{ id: 70, text: 'Buena' }, { id: 71, text: 'Mala' }],
   },

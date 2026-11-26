@@ -112,6 +112,7 @@ export function HostPage() {
                     <TimerBar deadline={q.deadline} serverTime={state.serverTime} totalSeconds={q.timeLimitSeconds} sound />
                     <h2 className="tq-question__text">{q.text}</h2>
                     {q.imageUrl && <img className="tq-question__image" src={q.imageUrl} alt="Imagen de la pregunta" />}
+                    {q.videoUrl && <video className="tq-question__video" src={q.videoUrl} controls playsInline preload="metadata" aria-label="Video de la pregunta" />}
                     <ol className="tq-options tq-options--static">
                       {q.options.map((o, i) => (
                         <li key={o.id} className="tq-option">

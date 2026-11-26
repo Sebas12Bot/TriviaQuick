@@ -135,6 +135,34 @@ class ProfileIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void localStorageAcceptsMp4VideoAndExplainsWhatNeedsCloudinary() throws Exception {
+        TestUser t = withPassword(Role.TEACHER, "Profe Video");
+        byte[] mp4 = new byte[64];
+        System.arraycopy("ftypisom".getBytes(), 0, mp4, 4, 8);
+        ResultActions ok = mvc.perform(multipart("/api/media/video").file(new MockMultipartFile("file", "clip.mp4", "video/mp4", mp4))
+                        .header("Authorization", "Bearer " + t.token()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.key").value(org.hamcrest.Matchers.matchesPattern("^[a-f0-9]{32}\\.mp4$")));
+        call(get((String) json(ok, "$.url")), t).andExpect(status().isOk()).andExpect(content().contentType("video/mp4"));
+        // MOV y fotos HEIC/WebP requieren Cloudinary: sin él, el error lo explica.
+        byte[] mov = new byte[64];
+        System.arraycopy("ftypqt  ".getBytes(), 0, mov, 4, 8);
+        mvc.perform(multipart("/api/media/video").file(new MockMultipartFile("file", "clip.mov", "video/quicktime", mov))
+                .header("Authorization", "Bearer " + t.token())).andExpect(jsonPath("$.code").value("FORMAT_NEEDS_CLOUD"));
+        byte[] heic = new byte[64];
+        System.arraycopy("ftypheic".getBytes(), 0, heic, 4, 8);
+        mvc.perform(multipart("/api/media").file(new MockMultipartFile("file", "foto.heic", "image/heic", heic))
+                .header("Authorization", "Bearer " + t.token())).andExpect(jsonPath("$.code").value("FORMAT_NEEDS_CLOUD"));
+        // Un ejecutable disfrazado de video se rechaza.
+        mvc.perform(multipart("/api/media/video").file(new MockMultipartFile("file", "x.mp4", "video/mp4", "MZ\u0090\u0000 malware".getBytes()))
+                .header("Authorization", "Bearer " + t.token())).andExpect(jsonPath("$.code").value("INVALID_VIDEO"));
+        // Estudiantes no suben videos.
+        TestUser s = withPassword(Role.STUDENT, "Alumno");
+        mvc.perform(multipart("/api/media/video").file(new MockMultipartFile("file", "clip.mp4", "video/mp4", mp4))
+                .header("Authorization", "Bearer " + s.token())).andExpect(status().isForbidden());
+    }
+
+    @Test
     void studentsCannotUploadQuizImages() throws Exception {
         TestUser s = withPassword(Role.STUDENT, "Eva");
         mvc.perform(multipart("/api/media").file(new MockMultipartFile("file", "a.png", "image/png", png(50, 50)))
@@ -199,7 +227,7 @@ class ProfileIntegrationTest extends IntegrationTestBase {
         call(get("/api/sessions/" + s.id() + "/results"), staying).andExpect(status().isOk())
                 .andExpect(jsonPath("$.ranking.length()").value(2))
                 .andExpect(jsonPath("$.ranking[0].displayName").value("Participante eliminado"))
-                .andExpect(jsonPath("$.ranking[0].score").value(1100))
+                .andExpect(jsonPath("$.ranking[0].score").value(1200)) // incluye el bonus de la más rápida
                 .andExpect(jsonPath("$.ranking[1].displayName").value("Hugo Queda"));
     }
 

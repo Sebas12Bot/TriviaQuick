@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/logout").permitAll()
                         // El token del enlace de verificación es la prueba; no requiere sesión.
                         .requestMatchers(HttpMethod.POST, "/api/profile/email/confirm").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/media").hasRole("TEACHER")
+                        .requestMatchers(HttpMethod.POST, "/api/media", "/api/media/video").hasRole("TEACHER")
                         .requestMatchers("/api/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()

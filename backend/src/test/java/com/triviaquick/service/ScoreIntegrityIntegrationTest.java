@@ -164,7 +164,8 @@ class ScoreIntegrityIntegrationTest extends IntegrationTestBase {
         QuestionInfo q2 = d.trivia().questions().get(1);
         answer(d.u1(), d.session(), q2.id(), q2.correctAnswerId()).andExpect(status().isOk());
 
-        assertThat(scoreOf(d.p1())).isEqualTo((1000 + 100) * 2 + (1000 + 100));
+        // P1 x2, P2 normal y el bonus de la más rápida de P1 (al avanzar); P2 sigue abierta.
+        assertThat(scoreOf(d.p1())).isEqualTo((1000 + 100) * 2 + (1000 + 100) + 100);
         assertThat(powerUps.findById(multiplierId).orElseThrow().getStatus()).isEqualTo(PowerUpStatus.CONSUMED);
         assertLedgerMatches(d.p1());
     }

@@ -57,6 +57,11 @@ public class ScoreService {
         }
     }
 
+    /** Indica si un hecho de juego ya generó su movimiento de puntos. */
+    public boolean alreadyApplied(String idempotencyKey) {
+        return transactions.existsByIdempotencyKey(idempotencyKey);
+    }
+
     /** Suma puntos (delta > 0) y registra el movimiento. */
     @Transactional(propagation = Propagation.MANDATORY)
     public ScoreTransaction award(SessionParticipant lockedParticipant, int points, ScoreReason reason,

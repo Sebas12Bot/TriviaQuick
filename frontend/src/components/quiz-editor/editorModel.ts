@@ -58,6 +58,8 @@ export const DEFAULT_SCORING: ScoringSettings = {
     { streakLength: 5, bonusPoints: 60 },
     { streakLength: 10, bonusPoints: 100 },
   ],
+  fastestBonusEnabled: true,
+  fastestBonusPoints: 100,
 };
 
 export const ALL_EVENT_TYPES: GameEventType[] = ['LIGHTNING_CHALLENGE', 'MULTIPLIER', 'SHIELD', 'DUEL'];
@@ -69,7 +71,7 @@ export function newQuestion(points = 1000, type: QuestionDraft['type'] = 'MULTIP
   return {
     kind: 'question',
     key: newKey('q'),
-    question: { type, text: '', timeLimitSeconds: 20, basePoints: points, imageKey: null, imageUrl: null, answers },
+    question: { type, text: '', timeLimitSeconds: 20, basePoints: points, imageKey: null, imageUrl: null, videoKey: null, videoUrl: null, answers },
   };
 }
 
@@ -97,7 +99,7 @@ export function fromDetail(d: TriviaDetail): EditorState {
       kind: 'question',
       key: newKey('q'),
       question: { type: q.type, text: q.text, timeLimitSeconds: q.timeLimitSeconds, basePoints: q.basePoints,
-        imageKey: q.imageKey, imageUrl: q.imageUrl ?? null, answers: q.answers.map((a) => ({ text: a.text, correct: a.correct })) },
+        imageKey: q.imageKey, imageUrl: q.imageUrl ?? null, videoKey: q.videoKey ?? null, videoUrl: q.videoUrl ?? null, answers: q.answers.map((a) => ({ text: a.text, correct: a.correct })) },
     });
     const ev = d.events.mode === 'MANUAL' ? d.timeline.find((t) => t.afterQuestion === index) : undefined;
     if (ev) {
@@ -111,7 +113,7 @@ export function fromDetail(d: TriviaDetail): EditorState {
       title: d.title, description: d.description ?? '', category: d.category ?? '', playMode: d.playMode,
       coverImageKey: d.coverImageKey, coverImageUrl: d.coverImageUrl, activityMinutes: d.activityMinutes,
     },
-    scoring: d.scoring,
+    scoring: { ...DEFAULT_SCORING, ...d.scoring },
     events: { ...d.events, autoTypes: [...d.events.autoTypes], abilities: { ...DEFAULT_ABILITIES, ...d.events.abilities } },
     items,
   };
@@ -122,8 +124,9 @@ export function toUpsert(state: EditorState, status: 'DRAFT' | 'PUBLISHED'): Tri
   const timeline: TimelineEventDraft[] = [];
   for (const item of state.items) {
     if (item.kind === 'question') {
-      const { imageUrl: _url, ...q } = item.question;
+      const { imageUrl: _url, videoUrl: _video, ...q } = item.question;
       void _url;
+      void _video;
       questions.push({ ...q, text: q.text.trim(), answers: q.answers.map((a) => ({ text: a.text.trim(), correct: a.correct })) });
     } else if (questions.length > 0 && state.events.mode === 'MANUAL') {
       timeline.push({ ...item.event, afterQuestion: questions.length - 1 });

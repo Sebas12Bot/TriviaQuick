@@ -35,5 +35,6 @@ export function result(ranking: ParticipantRanking[]): GameResult {
     podium: { sessionId: 1, places },
     ranking,
     tieBreakRule: 'Orden por puntuación total descendente; desempate por respuestas correctas.',
+    viewerRole: ranking.some((r) => r.currentUser) ? 'PARTICIPANT' : 'HOST',
   };
 }

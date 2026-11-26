@@ -30,8 +30,8 @@ spring:
     locations: classpath:db/migration
   servlet:
     multipart:
-      max-file-size: 4MB
-      max-request-size: 5MB
+      max-file-size: 60MB
+      max-request-size: 61MB
   mail:
     # Vacío => los correos no se envían: el enlace de verificación se escribe en el log (solo desarrollo).
     host: ${MAIL_HOST:}
@@ -85,7 +85,11 @@ triviaquick:
   storage:
     # Directorio de imágenes subidas (avatares y cuestionarios). En producción, un volumen persistente.
     dir: ${UPLOAD_DIR:${user.home}/.triviaquick/uploads}
-    max-upload-bytes: 3145728
+    max-image-bytes: 10485760
+    max-video-bytes: 52428800
+    # cloudinary://API_KEY:API_SECRET@CLOUD_NAME (panel de Cloudinary > API Keys). Vacío = disco local.
+    cloudinary-url: ${CLOUDINARY_URL:}
+    cloudinary-folder: ${CLOUDINARY_FOLDER:triviaquick}
   mail:
     from: ${MAIL_FROM:TriviaQuick <no-reply@triviaquick.local>}
     public-url: ${APP_PUBLIC_URL:http://localhost:5173}

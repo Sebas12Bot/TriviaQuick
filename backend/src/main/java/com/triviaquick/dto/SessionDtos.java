@@ -41,7 +41,7 @@ public final class SessionDtos {
     @Schema(description = "Pregunta en curso. No incluye la respuesta correcta.")
     public record QuestionViewDTO(Long id, int index, int total, String text, List<OptionDTO> options,
                                   int timeLimitSeconds, int basePoints, Instant startedAt, Instant deadline,
-                                  com.triviaquick.model.QuestionType type, String imageUrl) {
+                                  com.triviaquick.model.QuestionType type, String imageUrl, String videoUrl) {
     }
 
     public record MyAnswerDTO(Long answerId, boolean correct, int pointsAwarded, boolean multiplierApplied,

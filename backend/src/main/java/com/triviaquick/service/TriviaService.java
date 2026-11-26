@@ -121,7 +121,9 @@ public class TriviaService {
         ScoringConfig scoring = new ScoringConfig(defaultPoints,
                 sc == null || sc.speedBonusEnabled() == null || sc.speedBonusEnabled(),
                 sc == null || sc.streakEnabled() == null || sc.streakEnabled(),
-                sc == null || sc.streakBreaksOnMiss() == null || sc.streakBreaksOnMiss());
+                sc == null || sc.streakBreaksOnMiss() == null || sc.streakBreaksOnMiss(),
+                sc == null || sc.fastestBonusEnabled() == null || sc.fastestBonusEnabled(),
+                sc != null && sc.fastestBonusPoints() != null ? sc.fastestBonusPoints() : 100);
 
         List<CreateQuestionDTO> questions = dto.questions();
         if (!replaceQuestions && !sameQuestions(trivia, questions)) {
@@ -167,6 +169,7 @@ public class TriviaService {
             for (CreateQuestionDTO q : questions) {
                 QuestionType type = q.type() == null ? QuestionType.MULTIPLE_CHOICE : q.type();
                 Question question = new Question(q.text().trim(), q.timeLimitSeconds(), q.basePoints(), type, q.imageKey());
+                question.setVideoKey(q.videoKey());
                 q.answers().forEach(a -> question.addAnswer(new Answer(a.text().trim(), a.correct())));
                 trivia.addQuestion(question);
             }
@@ -277,7 +280,7 @@ public class TriviaService {
             QuestionType type = d.type() == null ? QuestionType.MULTIPLE_CHOICE : d.type();
             if (!q.getText().equals(d.text().trim()) || q.getTimeLimitSeconds() != d.timeLimitSeconds()
                     || q.getBasePoints() != d.basePoints() || q.getType() != type
-                    || !Objects.equals(q.getImageKey(), d.imageKey()) || q.getAnswers().size() != d.answers().size()) {
+                    || !Objects.equals(q.getImageKey(), d.imageKey()) || !Objects.equals(q.getVideoKey(), d.videoKey()) || q.getAnswers().size() != d.answers().size()) {
                 return false;
             }
             for (int j = 0; j < q.getAnswers().size(); j++) {
@@ -296,7 +299,7 @@ public class TriviaService {
         return new CreateTriviaDTO(d.title(), d.description(), d.category(), d.status(), d.playMode(), d.coverImageKey(),
                 d.activityMinutes(),
                 d.questions().stream().map(q -> new CreateQuestionDTO(null, q.type(), q.text(), q.timeLimitSeconds(),
-                        q.basePoints(), q.imageKey(),
+                        q.basePoints(), q.imageKey(), q.videoKey(),
                         q.answers().stream().map(a -> new CreateAnswerDTO(a.text(), a.correct())).toList())).toList(),
                 d.scoring(), d.events(), d.timeline());
     }

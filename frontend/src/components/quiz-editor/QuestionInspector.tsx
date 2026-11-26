@@ -88,8 +88,12 @@ export function QuestionInspector({ number, question, locked, onChange }: Props)
         </div>
       </div>
 
-      <ImagePicker label="Imagen de la pregunta (opcional)" imageUrl={question.imageUrl ?? null} disabled={locked}
-        onChange={(img) => set({ imageKey: img?.key ?? null, imageUrl: img?.url ?? null })} />
+      <div className="tq-grid-2">
+        <ImagePicker label="Imagen (opcional)" imageUrl={question.imageUrl ?? null} disabled={locked}
+          onChange={(img) => set({ imageKey: img?.key ?? null, imageUrl: img?.url ?? null })} />
+        <ImagePicker label="Video (opcional)" kind="video" imageUrl={question.videoUrl ?? null} disabled={locked}
+          onChange={(v) => set({ videoKey: v?.key ?? null, videoUrl: v?.url ?? null })} />
+      </div>
     </section>
   );
 }

@@ -71,12 +71,13 @@ public class GameResultService {
 
     @Transactional(readOnly = true)
     public GameResultDTO resultsFor(Long sessionId, AuthUser viewer) {
+        SessionAccessService.Viewer v = access.requireViewer(sessionId, viewer);
         GameSession session = requireFinished(sessionId, viewer);
         List<ParticipantRankingDTO> ranking = rankingService.finalEntries(sessionId, viewer.id());
         ParticipantRankingDTO mine = ranking.stream().filter(ParticipantRankingDTO::currentUser).findFirst().orElse(null);
         return new GameResultDTO(sessionId, session.getTrivia().getTitle(), session.getFinishedAt(), ranking.size(),
                 (int) questions.countByTriviaId(session.getTrivia().getId()), mine,
-                RankingService.podium(sessionId, ranking), ranking, RankingService.TIE_BREAK_RULE);
+                RankingService.podium(sessionId, ranking), ranking, RankingService.TIE_BREAK_RULE, v.host() ? "HOST" : "PARTICIPANT");
     }
 
     @Transactional(readOnly = true)

@@ -122,6 +122,7 @@ export function PlayPage() {
             <TimerBar deadline={q.deadline} serverTime={state.serverTime} totalSeconds={q.timeLimitSeconds} sound={!answered} />
             <h1 id="q-text" className="tq-question__text">{q.text}</h1>
             {q.imageUrl && <img className="tq-question__image" src={q.imageUrl} alt="Imagen de la pregunta" />}
+            {q.videoUrl && <video className="tq-question__video" src={q.videoUrl} controls playsInline preload="metadata" aria-label="Video de la pregunta" />}
             <div className="tq-options">
               {q.options.map((o, i) => {
                 const isChosen = chosenId === o.id;

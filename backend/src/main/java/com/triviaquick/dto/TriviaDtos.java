@@ -19,6 +19,7 @@ public final class TriviaDtos {
     }
 
     private static final String IMAGE_KEY = "^[a-f0-9]{32}\\.(png|jpg)$";
+    private static final String VIDEO_KEY = "^[a-f0-9]{32}\\.mp4$";
 
     public record CreateAnswerDTO(
             @NotBlank @Size(max = 200) String text,
@@ -32,6 +33,7 @@ public final class TriviaDtos {
             @NotNull @Min(5) @Max(120) Integer timeLimitSeconds,
             @NotNull @Min(10) @Max(5000) Integer basePoints,
             @Pattern(regexp = IMAGE_KEY, message = "Imagen no válida") String imageKey,
+            @Pattern(regexp = VIDEO_KEY, message = "Video no válido") String videoKey,
             @NotEmpty @Size(min = 2, max = 6) List<@Valid @NotNull CreateAnswerDTO> answers) {
     }
 
@@ -51,7 +53,9 @@ public final class TriviaDtos {
             @Size(max = 6) List<@Valid @NotNull SpeedTierDTO> speedTiers,
             Boolean streakEnabled,
             Boolean streakBreaksOnMiss,
-            @Size(max = 6) List<@Valid @NotNull StreakTierDTO> streakTiers) {
+            @Size(max = 6) List<@Valid @NotNull StreakTierDTO> streakTiers,
+            @Schema(description = "Bonus para quien acierta cada pregunta en menos tiempo") Boolean fastestBonusEnabled,
+            @Min(1) @Max(2000) Integer fastestBonusPoints) {
     }
 
     public record AbilityConfigDTO(
@@ -109,7 +113,8 @@ public final class TriviaDtos {
     }
 
     public record QuestionDetailDTO(Long id, int position, QuestionType type, String text, int timeLimitSeconds,
-                                    int basePoints, String imageKey, String imageUrl, List<AnswerDetailDTO> answers) {
+                                    int basePoints, String imageKey, String imageUrl, String videoKey, String videoUrl,
+                                    List<AnswerDetailDTO> answers) {
     }
 
     public record TriviaDetailDTO(Long id, String title, String description, String category, TriviaStatus status,

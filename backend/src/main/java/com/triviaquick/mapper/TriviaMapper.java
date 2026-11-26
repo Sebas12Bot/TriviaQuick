@@ -14,7 +14,7 @@ public final class TriviaMapper {
     }
 
     public static String mediaUrl(String key) {
-        return key == null ? null : "/api/media/" + key;
+        return com.triviaquick.service.media.MediaUrls.of(key);
     }
 
     public static TriviaSummaryDTO toSummary(Trivia t, long sessionsPlayed) {
@@ -29,7 +29,8 @@ public final class TriviaMapper {
         ScoringDTO scoring = new ScoringDTO(s.getDefaultPoints(), s.isSpeedBonusEnabled(),
                 t.getSpeedTiers().stream().map(x -> new SpeedTierDTO(x.getMaxElapsedPercent(), x.getBonusPoints())).toList(),
                 s.isStreakEnabled(), s.isStreakBreaksOnMiss(),
-                t.getStreakTiers().stream().map(x -> new StreakTierDTO(x.getStreakLength(), x.getBonusPoints())).toList());
+                t.getStreakTiers().stream().map(x -> new StreakTierDTO(x.getStreakLength(), x.getBonusPoints())).toList(),
+                s.isFastestBonusEnabled(), s.getFastestBonusPoints());
         EventSettingsDTO events = new EventSettingsDTO(e.getMode(), e.getAutoFrequency(),
                 e.autoTypesInOrder().isEmpty() ? EnumSet.noneOf(com.triviaquick.model.GameEventType.class)
                         : EnumSet.copyOf(e.autoTypesInOrder()),
@@ -40,7 +41,7 @@ public final class TriviaMapper {
                 t.getPlayMode(), t.getCoverImageKey(), mediaUrl(t.getCoverImageKey()), t.getActivityMinutes(),
                 t.getCreatedAt(), t.getUpdatedAt(), questionsLocked, inUse,
                 t.getQuestions().stream().map(q -> new QuestionDetailDTO(q.getId(), q.getPosition(), q.getType(),
-                        q.getText(), q.getTimeLimitSeconds(), q.getBasePoints(), q.getImageKey(), mediaUrl(q.getImageKey()),
+                        q.getText(), q.getTimeLimitSeconds(), q.getBasePoints(), q.getImageKey(), mediaUrl(q.getImageKey()), q.getVideoKey(), mediaUrl(q.getVideoKey()),
                         q.getAnswers().stream().map(a -> new AnswerDetailDTO(a.getId(), a.getText(), a.isCorrect())).toList()))
                         .toList(),
                 scoring, events,

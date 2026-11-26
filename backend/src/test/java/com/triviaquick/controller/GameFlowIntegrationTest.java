@@ -131,7 +131,7 @@ class GameFlowIntegrationTest extends IntegrationTestBase {
 
         ResultActions results = call(get("/api/sessions/" + s.id() + "/results"), beto).andExpect(status().isOk())
                 .andExpect(jsonPath("$.ranking[0].displayName").value("Ana"))
-                .andExpect(jsonPath("$.ranking[0].score").value(2200))
+                .andExpect(jsonPath("$.ranking[0].score").value(2400) /* 2200 + bonus de la más rápida en las 2 preguntas */)
                 .andExpect(jsonPath("$.ranking[1].position").value(2))
                 .andExpect(jsonPath("$.ranking[2].position").value(2))
                 .andExpect(jsonPath("$.ranking[1].tied").value(true))
@@ -170,7 +170,7 @@ class GameFlowIntegrationTest extends IntegrationTestBase {
         advance(teacher, s).andExpect(status().isConflict());
         call(post("/api/sessions/" + s.id() + "/finish"), teacher).andExpect(status().isConflict());
         call(get("/api/sessions/" + s.id() + "/results"), ana).andExpect(status().isOk())
-                .andExpect(jsonPath("$.ranking[0].score").value(1100));
+                .andExpect(jsonPath("$.ranking[0].score").value(1200)); // 1100 + bonus de la más rápida
     }
 
     @Test

@@ -52,6 +52,7 @@ export interface QuestionView {
   deadline: string;
   type: QuestionType;
   imageUrl: string | null;
+  videoUrl: string | null;
 }
 
 export interface MyAnswer {
@@ -181,6 +182,7 @@ export interface GameResult {
   podium: Podium;
   ranking: ParticipantRanking[];
   tieBreakRule: string;
+  viewerRole: ViewerRole;
 }
 
 // ------------------------------------------------------------------ v2: editor, puntuación y perfil
@@ -206,6 +208,8 @@ export interface QuestionDraft {
   basePoints: number;
   imageKey: string | null;
   imageUrl?: string | null;
+  videoKey: string | null;
+  videoUrl?: string | null;
   answers: AnswerDraft[];
 }
 
@@ -226,6 +230,8 @@ export interface ScoringSettings {
   streakEnabled: boolean;
   streakBreaksOnMiss: boolean;
   streakTiers: StreakTier[];
+  fastestBonusEnabled: boolean;
+  fastestBonusPoints: number;
 }
 
 export interface AbilitySettings {
@@ -338,4 +344,33 @@ export interface Profile {
   pendingEmail: string | null;
   createdAt: string;
   preferences: Preferences;
+}
+
+export type QuestionOutcome = 'ANSWERED_CORRECT' | 'ANSWERED_WRONG' | 'UNANSWERED' | 'NOT_ASKED';
+
+export interface ParticipantReport {
+  participantId: number;
+  displayName: string;
+  initials: string;
+  position: number;
+  score: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  unanswered: number;
+  bestStreak: number;
+  averageResponseMs: number | null;
+  questions: {
+    index: number;
+    text: string;
+    type: QuestionType;
+    outcome: QuestionOutcome;
+    chosenAnswer: string | null;
+    correctAnswer: string | null;
+    pointsAwarded: number;
+    speedBonus: number;
+    multiplierFactor: number;
+    responseTimeMs: number | null;
+    fastest: boolean;
+  }[];
+  bonuses: { reason: string; delta: number; description: string }[];
 }

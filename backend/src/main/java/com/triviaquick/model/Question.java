@@ -37,6 +37,9 @@ public class Question {
     @Column(name = "image_key", length = 80)
     private String imageKey;
 
+    @Column(name = "video_key", length = 80)
+    private String videoKey;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
     private List<Answer> answers = new ArrayList<>();
@@ -58,6 +61,8 @@ public class Question {
 
     public QuestionType getType() { return type; }
     public String getImageKey() { return imageKey; }
+    public String getVideoKey() { return videoKey; }
+    public void setVideoKey(String videoKey) { this.videoKey = videoKey; }
 
     void attachTo(Trivia trivia, int position) {
         this.trivia = trivia;

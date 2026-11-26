@@ -85,6 +85,20 @@ export function QuizSettingsPanel({ meta, scoring, events, onMeta, onScoring, on
         )}
 
         <label className="tq-switch">
+          <input type="checkbox" checked={scoring.fastestBonusEnabled}
+            onChange={(e) => onScoring({ ...scoring, fastestBonusEnabled: e.target.checked })} />
+          <span>Premio a la respuesta correcta más rápida</span>
+        </label>
+        {scoring.fastestBonusEnabled && (
+          <div className="tq-field">
+            <label htmlFor="qz-fastest">Puntos extra para quien acierte primero cada pregunta</label>
+            <input id="qz-fastest" type="number" min={1} max={2000} step={10} value={scoring.fastestBonusPoints}
+              onChange={(e) => onScoring({ ...scoring, fastestBonusPoints: Number(e.target.value) })} />
+            <p className="tq-field__hint">Se suma al cerrar la pregunta, así nadie sabe durante el juego quién acertó. A igual tiempo, gana quien respondió antes.</p>
+          </div>
+        )}
+
+        <label className="tq-switch">
           <input type="checkbox" checked={scoring.streakEnabled} onChange={(e) => onScoring({ ...scoring, streakEnabled: e.target.checked })} />
           <span>Bonificación por racha</span>
         </label>

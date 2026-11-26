@@ -28,9 +28,11 @@ import java.util.List;
 public class GameResultController {
 
     private final GameResultService resultService;
+    private final com.triviaquick.service.ParticipantReportService reportService;
 
-    public GameResultController(GameResultService resultService) {
+    public GameResultController(GameResultService resultService, com.triviaquick.service.ParticipantReportService reportService) {
         this.resultService = resultService;
+        this.reportService = reportService;
     }
 
     @GetMapping("/results")
@@ -44,6 +46,16 @@ public class GameResultController {
     @Operation(summary = "Los tres primeros puestos (con empates)")
     public PodiumDTO podium(@PathVariable @Positive Long sessionId, @AuthenticationPrincipal AuthUser user) {
         return resultService.podiumFor(sessionId, user);
+    }
+
+    @GetMapping("/participants/{participantId}/report")
+    @Operation(summary = "Reporte de un participante: respuestas correctas e incorrectas, puntos y bonificaciones",
+            description = "Lo ven el docente anfitrión y el propio participante. Otros estudiantes reciben 403.")
+    @ApiResponse(responseCode = "403", description = "Sin permiso", content = @Content(schema = @Schema(implementation = ApiError.class)))
+    public com.triviaquick.dto.ParticipantReportDTO report(@PathVariable @Positive Long sessionId,
+                                                           @PathVariable @Positive Long participantId,
+                                                           @AuthenticationPrincipal AuthUser user) {
+        return reportService.report(sessionId, participantId, user);
     }
 
     @GetMapping("/score-transactions")

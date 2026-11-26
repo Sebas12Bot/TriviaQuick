@@ -22,7 +22,7 @@ public final class SessionMapper {
         return new QuestionViewDTO(q.getId(), q.getPosition(), total, q.getText(),
                 q.getAnswers().stream().map(a -> new OptionDTO(a.getId(), a.getText())).toList(),
                 q.getTimeLimitSeconds(), q.getBasePoints(), s.getQuestionStartedAt(), s.getQuestionDeadline(),
-                q.getType(), TriviaMapper.mediaUrl(q.getImageKey()));
+                q.getType(), TriviaMapper.mediaUrl(q.getImageKey()), TriviaMapper.mediaUrl(q.getVideoKey()));
     }
 
     public static MyAnswerDTO toMyAnswer(SubmittedAnswer a) {

@@ -2,6 +2,16 @@
 
 Plataforma de trivias en vivo. El docente lanza una partida; los estudiantes se unen con un código, responden preguntas y minijuegos, y la partida termina con una ceremonia de resultados: podio animado y clasificación oficial calculada por el servidor.
 
+## Cuenta de docente
+
+Para registrarte como **docente**, usa este código de registro (proyecto académico, se publica a propósito):
+
+```
+Z5htAlIZ90RP
+```
+
+El backend lo compara con la variable `TEACHER_SIGNUP_CODE`, que debe tener exactamente ese valor en el servidor (Render). Si se cambia allí, hay que actualizarlo también aquí.
+
 ## Stack
 
 | Capa | Tecnología |
@@ -82,8 +92,8 @@ cd backend && ./mvnw test
 cd frontend && npm test && npm run typecheck
 ```
 
-- **Backend**: 47 pruebas (unitarias de clasificación, puntuación, duelo y autorización STOMP; de integración con PostgreSQL real para seguridad, flujo completo con los 4 minijuegos y concurrencia).
-- **Frontend**: 22 pruebas (podio con 1, 2 y 3+ participantes, empates, clasificación, marcador animado, carga, vacío, error, partida pendiente, secuencia de animación y movimiento reducido).
+- **Backend**: 80 pruebas (unitarias de clasificación, puntuación, duelo y autorización STOMP; de integración con PostgreSQL real para seguridad, flujo completo con los 4 minijuegos y concurrencia).
+- **Frontend**: 56 pruebas (podio con 1, 2 y 3+ participantes, empates, clasificación, marcador animado, carga, vacío, error, partida pendiente, secuencia de animación y movimiento reducido).
 
 ## Versión 2: identidad, mascota, audio, editor y perfil
 
@@ -94,6 +104,13 @@ cd frontend && npm test && npm run typecheck
 - **Puntuación configurable**: puntos base por pregunta, más un bonus por velocidad según tramos (el tiempo lo mide el servidor), multiplicado por el factor del multiplicador; además, bonus por racha según tramos (fallar o no responder la rompe, si se configura). Cada bonus genera su `ScoreTransaction`.
 - **Perfil** (`/profile`): nombre; cambio de correo con verificación por enlace (SMTP configurable); foto validada por su contenido y re-codificada; cambio de contraseña, que cierra las demás sesiones; preferencias de sonido; eliminación de cuenta por **anonimización**, que conserva el historial ajeno.
 - **Migración `V2__editor_puntuacion_perfil.sql`**: solo añade columnas y tablas. Las trivias existentes quedan publicadas y reciben los tramos por defecto.
+
+## Versión 3: premio a la más rápida, reporte por estudiante y vídeo
+
+- **Premio a la respuesta correcta más rápida**: al cerrarse cada pregunta, quien acertó primero (según el tiempo medido por el servidor) recibe un bonus configurable en el editor (por defecto +100; entre 1 y 2000). Se guarda como `ScoreTransaction` con motivo `FASTEST_ANSWER` y una clave idempotente, así que no se duplica aunque se repita el cierre. Durante la pregunta nadie sabe quién acertó.
+- **Reporte por participante**: en la clasificación final, el docente anfitrión ve un botón ⋯ en cada fila. Abre un reporte con aciertos, fallos, preguntas sin responder, mejor racha, tiempo medio y, pregunta por pregunta, qué respondió, cuál era la correcta, los puntos y las bonificaciones. Endpoint: `GET /api/sessions/{sessionId}/participants/{participantId}/report`. Solo pueden leerlo el anfitrión o el propio participante.
+- **Vídeo en las preguntas y Cloudinary**: cada pregunta admite una imagen y un vídeo. Límites: imágenes de hasta 10 MB y vídeos de hasta 50 MB. Sin `CLOUDINARY_URL`, los archivos se guardan en `UPLOAD_DIR`; en ese modo solo se aceptan PNG, JPG, GIF y MP4. Con `CLOUDINARY_URL`, se aceptan además las fotos de celular (HEIC, WebP) y los vídeos MOV y WebM, que Cloudinary convierte. Los archivos se suben firmados desde el backend, y `/api/media/{clave}` redirige a la URL de Cloudinary, que es pública pero no se puede adivinar.
+- **Migración `V3__bonus_mas_rapido_y_video.sql`**: solo añade columnas, un índice y el nuevo motivo de puntuación.
 
 ## Pendiente
 

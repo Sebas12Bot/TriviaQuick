@@ -15,5 +15,6 @@ public record GameResultDTO(
         @Schema(description = "Fila de quien consulta; null si es el anfitrión") ParticipantRankingDTO myResult,
         PodiumDTO podium,
         List<ParticipantRankingDTO> ranking,
-        String tieBreakRule) {
+        String tieBreakRule,
+        @Schema(description = "HOST si consulta el docente anfitrión; PARTICIPANT si es un participante") String viewerRole) {
 }

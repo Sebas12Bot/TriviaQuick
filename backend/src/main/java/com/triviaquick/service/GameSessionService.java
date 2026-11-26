@@ -146,6 +146,7 @@ public class GameSessionService {
             case FINISHED -> throw ApiException.conflict("SESSION_FINISHED", "La partida ya terminó.");
             case QUESTION -> {
                 int index = session.getCurrentQuestionIndex();
+                awardFastestAnswer(session);
                 Optional<GameEvent> event = eventService.maybeStart(session, index, total);
                 if (event.isPresent()) {
                     session.enterEvent();
@@ -178,8 +179,40 @@ public class GameSessionService {
         if (session.getStatus() == SessionStatus.EVENT) {
             eventService.resolveActive(session);
         }
+        if (session.getStatus() == SessionStatus.QUESTION) {
+            awardFastestAnswer(session);
+        }
         finalizeSession(session);
         return stateFor(sessionId, host);
+    }
+
+    /**
+     * Al cerrar una pregunta, premia a quien la acertó en menos tiempo (tiempo medido por el servidor;
+     * a igual tiempo gana quien llegó antes). Se ejecuta con la sesión bloqueada en exclusiva, así que
+     * ninguna respuesta puede entrar mientras tanto, y su clave de idempotencia impide repetirlo.
+     */
+    private void awardFastestAnswer(GameSession lockedSession) {
+        Trivia trivia = lockedSession.getTrivia();
+        if (!trivia.getScoring().isFastestBonusEnabled()) {
+            return;
+        }
+        Question question = questions.findWithAnswersByTriviaAndPosition(trivia.getId(),
+                lockedSession.getCurrentQuestionIndex()).orElseThrow();
+        String key = "FASTEST:" + lockedSession.getId() + ":" + question.getId();
+        if (scoreService.alreadyApplied(key)) {
+            return;
+        }
+        submittedAnswers.findCorrectFastestFirst(question.getId(), lockedSession.getId(),
+                        org.springframework.data.domain.PageRequest.of(0, 1))
+                .stream().findFirst()
+                .ifPresent(fastest -> {
+                    SessionParticipant winner = participants.findByIdForUpdate(fastest.getParticipant().getId()).orElseThrow();
+                    scoreService.award(winner, trivia.getScoring().getFastestBonusPoints(), ScoreReason.FASTEST_ANSWER,
+                            question, null, "Respuesta correcta más rápida de la pregunta " + (question.getPosition() + 1)
+                                    + String.format(" (%.1f s)", fastest.getResponseTimeMs() / 1000.0), key);
+                    notifier.notify(lockedSession.getId(), SessionNotifier.Type.RANKING_UPDATED, null,
+                            Map.of("fastestParticipantId", winner.getId()));
+                });
     }
 
     private GameSession lockForHost(Long sessionId, AuthUser host) {

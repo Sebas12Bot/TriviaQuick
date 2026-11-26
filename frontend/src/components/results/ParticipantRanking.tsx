@@ -7,10 +7,12 @@ interface Props {
   entries: Entry[];
   tieBreakRule: string;
   visible: boolean;
+  /** Si se indica, cada fila muestra un menú para abrir el reporte del participante (docente). */
+  onReport?: (entry: Entry) => void;
 }
 
 /** Panel lateral con la clasificación oficial, en el orden que entrega el servidor. */
-export function ParticipantRanking({ entries, tieBreakRule, visible }: Props) {
+export function ParticipantRanking({ entries, tieBreakRule, visible, onReport }: Props) {
   const listRef = useRef<HTMLOListElement>(null);
   const reduced = useReducedMotion();
 
@@ -27,7 +29,7 @@ export function ParticipantRanking({ entries, tieBreakRule, visible }: Props) {
   }, [visible, reduced]);
 
   return (
-    <section className="tq-ranking" data-visible={visible} aria-labelledby="ranking-title">
+    <section className={`tq-ranking${onReport ? ' tq-ranking--actions' : ''}`} data-visible={visible} aria-labelledby="ranking-title">
       <header className="tq-ranking__head">
         <h2 id="ranking-title">Clasificación de participantes</h2>
         <p className="tq-ranking__count tabular">{entries.length}</p>
@@ -37,10 +39,11 @@ export function ParticipantRanking({ entries, tieBreakRule, visible }: Props) {
         <span>Participante</span>
         <span title="Respuestas correctas">Aciertos</span>
         <span>Puntos</span>
+        {onReport && <span />}
       </div>
       <ol ref={listRef} className="tq-ranking__list" tabIndex={0} aria-label="Clasificación completa">
         {entries.map((entry, i) => (
-          <RankingItem key={entry.participantId} entry={entry} index={i} />
+          <RankingItem key={entry.participantId} entry={entry} index={i} onReport={onReport} />
         ))}
       </ol>
       <p className="tq-ranking__rule">{tieBreakRule}</p>

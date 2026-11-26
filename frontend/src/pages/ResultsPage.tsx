@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAudio } from '../context/AudioContext';
 import type { RevealPhase } from '../hooks/useRevealSequence';
 import { Link, useParams } from 'react-router-dom';
@@ -13,7 +13,8 @@ import { WinnerCelebration } from '../components/results/WinnerCelebration';
 import { GameSummary } from '../components/results/GameSummary';
 import { Countdown } from '../components/results/Countdown';
 import { BrandMark } from '../components/common/BrandMark';
-import type { GameResult } from '../types/api';
+import type { GameResult, ParticipantRanking as RankingEntry } from '../types/api';
+import { ParticipantReportDialog } from '../components/results/ParticipantReportDialog';
 import '../styles/results.css';
 
 /**
@@ -81,6 +82,10 @@ function Ceremony({ result }: { result: GameResult }) {
   const winners = result.podium.places[0]?.participants ?? [];
   const sequenceRunning = phase !== 'complete';
   usePodiumSounds(phase, count, skipped);
+  // Solo el docente anfitrión ve el menú de reporte de cada participante.
+  const canReport = result.viewerRole === 'HOST';
+  const [reportFor, setReportFor] = useState<RankingEntry | null>(null);
+  const closeReport = useCallback(() => setReportFor(null), []);
 
   return (
     <main className="tq-ceremony" data-phase={phase} data-skipped={skipped}>
@@ -120,8 +125,10 @@ function Ceremony({ result }: { result: GameResult }) {
           </div>
         </section>
 
-        <ParticipantRanking entries={result.ranking} tieBreakRule={result.tieBreakRule} visible={phase === 'complete'} />
+        <ParticipantRanking entries={result.ranking} tieBreakRule={result.tieBreakRule} visible={phase === 'complete'}
+          onReport={canReport ? setReportFor : undefined} />
       </div>
+      {reportFor && <ParticipantReportDialog sessionId={result.sessionId} participant={reportFor} onClose={closeReport} />}
     </main>
   );
 }

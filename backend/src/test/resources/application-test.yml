@@ -10,7 +10,10 @@ triviaquick:
     demo-data: false
   storage:
     dir: ${java.io.tmpdir}/triviaquick-test-uploads
-    max-upload-bytes: 3145728
+    max-image-bytes: 10485760
+    max-video-bytes: 52428800
+    cloudinary-url: ""
+    cloudinary-folder: triviaquick-test
   embedded-db:
     # Puerto aleatorio y directorio temporal limpio en cada ejecución.
     port: 0

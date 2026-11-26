@@ -288,6 +288,7 @@ button.tq-tl__node { cursor: pointer; }
 }
 .tq-image-picker__drop:hover:not(:disabled) { border-color: var(--coral); color: var(--coral-ink); background: var(--coral-soft); }
 .tq-image-picker__preview { position: relative; align-self: flex-start; }
+.tq-image-picker__preview video { width: 100%; max-width: 320px; max-height: 180px; border-radius: var(--radius-md); display: block; background: var(--black); }
 .tq-image-picker__preview img { max-width: 100%; max-height: 180px; border-radius: var(--radius-md); display: block; }
 .tq-image-picker__remove {
   position: absolute;

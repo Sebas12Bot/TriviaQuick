@@ -85,4 +85,23 @@ describe('editorModel · conversión', () => {
     expect(issues.some((i) => i.includes('título'))).toBe(true);
     expect(issues.some((i) => i.includes('enunciado'))).toBe(true);
   });
+
+  it('activa por defecto el premio a la más rápida y completa ajustes antiguos', () => {
+    expect(emptyState().scoring).toMatchObject({ fastestBonusEnabled: true, fastestBonusPoints: 100 });
+    const legacy = { ...emptyState().scoring } as Record<string, unknown>;
+    delete legacy.fastestBonusEnabled;
+    delete legacy.fastestBonusPoints;
+    const detail = {
+      id: 1, title: 'T', description: null, category: null, status: 'DRAFT', playMode: 'GROUP', coverImageKey: null,
+      coverImageUrl: null, activityMinutes: null, createdAt: '', updatedAt: '', questionsLocked: false, inUse: false,
+      questions: [{ id: 9, position: 0, type: 'MULTIPLE_CHOICE', text: 'P', timeLimitSeconds: 20, basePoints: 100, imageKey: null,
+        imageUrl: null, videoKey: 'v.mp4', videoUrl: '/api/media/v.mp4', answers: [{ text: 'A', correct: true }] }],
+      scoring: legacy, events: emptyState().events, timeline: [],
+    } as unknown as TriviaDetail;
+    const state = fromDetail(detail);
+    expect(state.scoring.fastestBonusPoints).toBe(100);
+    const q0 = toUpsert(state, 'DRAFT').questions[0] as unknown as Record<string, unknown>;
+    expect(q0.videoKey).toBe('v.mp4');
+    expect(q0).not.toHaveProperty('videoUrl');
+  });
 });
